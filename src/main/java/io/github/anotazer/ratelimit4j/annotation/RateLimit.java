@@ -18,4 +18,5 @@ public @interface RateLimit {
   DeliveryType deliveryType() default DeliveryType.HTTP_HEADER; // 전송 매개체
   KeyType keyType() default KeyType.IP; // 키 타입
   String key() default ""; // 식별 키 이름
+  String cookieName() default ""; // 쿠키 이름
 }
