@@ -1,6 +1,7 @@
 package io.github.anotazer.ratelimit4j.aspect;
 
 import io.github.anotazer.ratelimit4j.annotation.RateLimit;
+import io.github.anotazer.ratelimit4j.service.RateLimitService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
@@ -22,7 +23,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Aspect
 @Component
 public class RateLimitAspect {
+  @Autowired
+  private HttpServletRequest httpServletRequest;
+  private final RateLimitService rateLimitService;
+
   private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+
+  private RateLimitAspect(RateLimitService rateLimitService) {
+    this.rateLimitService = rateLimitService;
+  }
 
   // @RateLimit 어노테이션이 적용된 메서드 및 클래스에 대한 포인트컷 정의
   @Pointcut("@within(io.github.anotazer.ratelimit4j.annotation.RateLimit) || @annotation(io.github.anotazer.ratelimit4j.annotation.RateLimit)")
@@ -33,11 +42,11 @@ public class RateLimitAspect {
   public void nonNoRateLimitMethods() {}
 
   @Around("rateLimitMethods() && nonNoRateLimitMethods()")
-  public Object applyRateLimit(ProceedingJoinPoint joinPoint) throws Throwable { // JoinPoint는 현재 실행 중인 메서드에 대한 정보를 가지고 있다.
+  public Object applyRateLimit(ProceedingJoinPoint joinPoint) throws Throwable {
     RateLimit rateLimit = getRateLimitAnnotation(joinPoint);
 
     if (rateLimit == null) {
-      return joinPoint.proceed(); // RateLimit 어노테이션이 없으면 그냥 메서드 실행
+      return joinPoint.proceed();
     }
 
     String key = getKey(rateLimit);
@@ -50,9 +59,8 @@ public class RateLimitAspect {
     }
   }
 
-  // 어노테이션에서 설정된 버킷 생성
   private Bucket createBucket(RateLimit rateLimit) {
-    Duration duration = Duration.ofSeconds(rateLimit.timeUnit().toSeconds(rateLimit.duration())); // 초 단위 변경
+    Duration duration = Duration.ofSeconds(rateLimit.timeUnit().toSeconds(rateLimit.duration()));
     Bandwidth limit = Bandwidth.classic(rateLimit.limit(), Refill.greedy(rateLimit.limit(), duration));
     return Bucket.builder().addLimit(limit).build();
   }
@@ -74,8 +82,7 @@ public class RateLimitAspect {
     return rateLimit;
   }
 
-  // Todo : DeliveryType, KeyType 에 따라서 Key 꺼내기
   private String getKey(RateLimit rateLimit) {
-    return rateLimit.key();
+    return rateLimitService.extractKey(httpServletRequest, rateLimit);
   }
 }
