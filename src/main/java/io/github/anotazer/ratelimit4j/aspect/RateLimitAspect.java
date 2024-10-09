@@ -1,6 +1,8 @@
 package io.github.anotazer.ratelimit4j.aspect;
 
 import io.github.anotazer.ratelimit4j.annotation.RateLimit;
+import io.github.anotazer.ratelimit4j.exception.ErrorCode;
+import io.github.anotazer.ratelimit4j.exception.custom.RateLimitException;
 import io.github.anotazer.ratelimit4j.service.RateLimitService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -55,7 +57,7 @@ public class RateLimitAspect {
     if (bucket.tryConsume(1)) {
       return joinPoint.proceed();
     } else {
-      throw new RuntimeException("Too many requests");
+      throw new RateLimitException.Builder(ErrorCode.TOO_MANY_REQUESTS).build();
     }
   }
 
