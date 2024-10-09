@@ -16,7 +16,7 @@ public @interface RateLimit {
   TimeUnit timeUnit() default TimeUnit.SECOND; // 시간 단위
   int duration(); // 시간 값
   DeliveryType deliveryType() default DeliveryType.HTTP_HEADER; // 전송 매개체
-  KeyType keyType() default KeyType.IP; // 키 타입
-  String key() default ""; // 식별 키 이름
+  KeyType keyType() default KeyType.GLOBAL; // 키 타입
+  String keyName() default ""; // 식별 키 이름
   String cookieName() default ""; // 쿠키 이름
 }
