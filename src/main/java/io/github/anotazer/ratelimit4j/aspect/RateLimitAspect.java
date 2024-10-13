@@ -1,5 +1,7 @@
 package io.github.anotazer.ratelimit4j.aspect;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.github.anotazer.ratelimit4j.annotation.RateLimit;
 import io.github.anotazer.ratelimit4j.exception.ErrorCode;
 import io.github.anotazer.ratelimit4j.exception.custom.RateLimitException;
@@ -19,8 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Aspect
 @Component
@@ -29,7 +30,10 @@ public class RateLimitAspect {
   private HttpServletRequest httpServletRequest;
   private final RateLimitService rateLimitService;
 
-  private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+  private final Cache<String, Bucket> buckets = Caffeine.newBuilder()
+    .maximumSize(10000)
+    .expireAfterAccess(30, TimeUnit.MINUTES)
+    .build();
 
   private RateLimitAspect(RateLimitService rateLimitService) {
     this.rateLimitService = rateLimitService;
@@ -52,7 +56,7 @@ public class RateLimitAspect {
     }
 
     String key = getKey(rateLimit);
-    Bucket bucket = buckets.computeIfAbsent(key, k -> createBucket(rateLimit));
+    Bucket bucket = buckets.get(key, k -> createBucket(rateLimit));
 
     if (bucket.tryConsume(1)) {
       return joinPoint.proceed();
@@ -60,13 +64,6 @@ public class RateLimitAspect {
       throw new RateLimitException.Builder(ErrorCode.TOO_MANY_REQUESTS).build();
     }
   }
-
-  private Bucket createBucket(RateLimit rateLimit) {
-    Duration duration = Duration.ofSeconds(rateLimit.timeUnit().toSeconds(rateLimit.duration()));
-    Bandwidth limit = Bandwidth.classic(rateLimit.limit(), Refill.greedy(rateLimit.limit(), duration));
-    return Bucket.builder().addLimit(limit).build();
-  }
-
 
   // 호출되는 메서드의 RateLimit 정보 가져오기
   private RateLimit getRateLimitAnnotation(ProceedingJoinPoint joinPoint) throws NoSuchMethodException {
@@ -86,5 +83,11 @@ public class RateLimitAspect {
 
   private String getKey(RateLimit rateLimit) {
     return rateLimitService.extractKey(httpServletRequest, rateLimit);
+  }
+
+  private Bucket createBucket(RateLimit rateLimit) {
+    Duration duration = Duration.ofSeconds(rateLimit.timeUnit().toSeconds(rateLimit.duration()));
+    Bandwidth limit = Bandwidth.classic(rateLimit.limit(), Refill.intervally(rateLimit.limit(), duration));
+    return Bucket.builder().addLimit(limit).build();
   }
 }
