@@ -4,6 +4,7 @@ public enum ErrorCode {
 
     // 코드와 메시지를 포함한 에러코드를 정의한다.
     BAD_REQUEST("400", "Bad Request"),
+    UNSUPPORTED("415", "Unsupported"),
     TOO_MANY_REQUESTS("429", "Too many requests"),
 
     KEY_NAME_NOT_FOUND("KEY_001", "The specified key name does not exist"),

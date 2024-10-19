@@ -1,4 +1,4 @@
-package io.github.anotazer.ratelimit4j.service.strategy.impl;
+package io.github.anotazer.ratelimit4j.service.strategy.impl.delivery;
 
 import io.github.anotazer.ratelimit4j.annotation.RateLimit;
 import io.github.anotazer.ratelimit4j.exception.ErrorCode;
