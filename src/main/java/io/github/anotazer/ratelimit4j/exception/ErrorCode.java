@@ -7,6 +7,8 @@ public enum ErrorCode {
     UNSUPPORTED("415", "Unsupported"),
     TOO_MANY_REQUESTS("429", "Too many requests"),
 
+    KEY_NAME_NOT_FOUND("KEY_001", "The specified key name does not exist"),
+    COOKIE_NOT_FOUND("COOKIE_001", "The specified cookie does not exist"),
     INTERNAL_SERVER_ERROR("500", "Internal server error");
 
     private final String code;
