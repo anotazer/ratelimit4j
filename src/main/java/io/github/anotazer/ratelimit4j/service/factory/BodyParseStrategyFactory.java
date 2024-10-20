@@ -6,7 +6,7 @@ import io.github.anotazer.ratelimit4j.service.strategy.BodyParseStrategy;
 import io.github.anotazer.ratelimit4j.service.strategy.impl.body.FormStrategy;
 import io.github.anotazer.ratelimit4j.service.strategy.impl.body.JsonStrategy;
 
-public class BodyParserStrategyFactory {
+public class BodyParseStrategyFactory {
   public static BodyParseStrategy getStrategy(String contentType) {
     return switch (contentType) {
       case "application/json" -> new JsonStrategy();

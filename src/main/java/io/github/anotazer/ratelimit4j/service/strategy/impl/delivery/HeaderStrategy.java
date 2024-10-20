@@ -19,8 +19,8 @@ public class HeaderStrategy implements DeliveryStrategy {
 
     return Optional.ofNullable(request.getHeader(rateLimit.keyName()))
         .filter(key -> !key.isBlank())
-        .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.BAD_REQUEST)
-            .withPayload(rateLimit.keyName() + " 는(은) 존재하지 않는 keyName 입니다.")
+        .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.KEY_NAME_NOT_FOUND)
+            .withPayload("Requested key name: " + rateLimit.keyName())
             .build());
   }
 }
