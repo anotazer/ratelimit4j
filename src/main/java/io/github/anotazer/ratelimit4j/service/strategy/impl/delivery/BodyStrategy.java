@@ -3,7 +3,7 @@ package io.github.anotazer.ratelimit4j.service.strategy.impl.delivery;
 import io.github.anotazer.ratelimit4j.annotation.RateLimit;
 import io.github.anotazer.ratelimit4j.exception.ErrorCode;
 import io.github.anotazer.ratelimit4j.exception.custom.RateLimitException;
-import io.github.anotazer.ratelimit4j.service.factory.BodyParserStrategyFactory;
+import io.github.anotazer.ratelimit4j.service.factory.BodyParseStrategyFactory;
 import io.github.anotazer.ratelimit4j.service.strategy.BodyParseStrategy;
 import io.github.anotazer.ratelimit4j.service.strategy.DeliveryStrategy;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ public class BodyStrategy implements DeliveryStrategy {
       throw new RateLimitException.Builder(ErrorCode.BAD_REQUEST).build();
     }
 
-    BodyParseStrategy bodyParseStrategy = BodyParserStrategyFactory.getStrategy(contentType);
+    BodyParseStrategy bodyParseStrategy = BodyParseStrategyFactory.getStrategy(contentType);
     return bodyParseStrategy.parse(body, keyName);
   }
 
