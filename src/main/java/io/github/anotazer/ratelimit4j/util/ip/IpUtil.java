@@ -1,4 +1,4 @@
-package io.github.anotazer.ratelimit4j.util;
+package io.github.anotazer.ratelimit4j.util.ip;
 
 import jakarta.servlet.http.HttpServletRequest;
 
