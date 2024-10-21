@@ -5,7 +5,7 @@ import io.github.anotazer.ratelimit4j.enums.KeyType;
 import io.github.anotazer.ratelimit4j.exception.ErrorCode;
 import io.github.anotazer.ratelimit4j.exception.custom.RateLimitException;
 import io.github.anotazer.ratelimit4j.service.strategy.DeliveryStrategy;
-import io.github.anotazer.ratelimit4j.util.IpUtil;
+import io.github.anotazer.ratelimit4j.util.ip.IpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Optional;
