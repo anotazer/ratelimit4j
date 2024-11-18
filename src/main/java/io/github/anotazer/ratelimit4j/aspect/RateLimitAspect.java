@@ -9,25 +9,26 @@ import io.github.anotazer.ratelimit4j.service.RateLimitService;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Aspect
-@Component
 public class RateLimitAspect {
-  @Autowired
-  private HttpServletRequest httpServletRequest;
+  private static final Logger log = LoggerFactory.getLogger(RateLimitAspect.class);
   private final RateLimitService rateLimitService;
 
   private final Cache<String, Bucket> buckets = Caffeine.newBuilder()
@@ -35,7 +36,7 @@ public class RateLimitAspect {
     .expireAfterAccess(30, TimeUnit.MINUTES)
     .build();
 
-  private RateLimitAspect(RateLimitService rateLimitService) {
+  public RateLimitAspect(RateLimitService rateLimitService) {
     this.rateLimitService = rateLimitService;
   }
 
@@ -82,6 +83,7 @@ public class RateLimitAspect {
   }
 
   private String getKey(RateLimit rateLimit) {
+    HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     return rateLimitService.extractKey(httpServletRequest, rateLimit);
   }
 
@@ -89,5 +91,10 @@ public class RateLimitAspect {
     Duration duration = Duration.ofSeconds(rateLimit.timeUnit().toSeconds(rateLimit.duration()));
     Bandwidth limit = Bandwidth.classic(rateLimit.limit(), Refill.intervally(rateLimit.limit(), duration));
     return Bucket.builder().addLimit(limit).build();
+  }
+
+  @PostConstruct
+  public void init() {
+    log.info("Init RateLimit Aspect");
   }
 }
