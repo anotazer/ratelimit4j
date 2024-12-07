@@ -13,9 +13,9 @@ public class QueryParamStrategy implements DeliveryStrategy {
     public String getKey(HttpServletRequest request, RateLimit rateLimit) {
 
         return Optional.ofNullable(request.getParameter(rateLimit.keyName()))
-                .filter(key -> !key.isBlank())
-                .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.KEY_NAME_NOT_FOUND)
-                        .withPayload("Requested key name: " + rateLimit.keyName())
-                        .build());
+            .filter(key -> !key.isBlank())
+            .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.KEY_NAME_NOT_FOUND)
+                .withPayload("Requested key name: " + rateLimit.keyName())
+                .build());
     }
 }
