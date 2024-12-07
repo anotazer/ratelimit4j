@@ -7,12 +7,13 @@ import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
 public class RateLimitConfig {
-  @Bean
-  public RateLimitService rateLimitService() {
-    return new RateLimitService();
-  }
-  @Bean
-  public RateLimitAspect rateLimitAspect(RateLimitService rateLimitService) {
-    return new RateLimitAspect(rateLimitService);
-  }
+    @Bean
+    public RateLimitService rateLimitService() {
+        return new RateLimitService();
+    }
+
+    @Bean
+    public RateLimitAspect rateLimitAspect(RateLimitService rateLimitService) {
+        return new RateLimitAspect(rateLimitService);
+    }
 }

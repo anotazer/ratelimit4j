@@ -8,12 +8,12 @@ import io.github.anotazer.ratelimit4j.service.strategy.impl.delivery.HeaderStrat
 import io.github.anotazer.ratelimit4j.service.strategy.impl.delivery.QueryParamStrategy;
 
 public class DeliveryStrategyFactory {
-  public static DeliveryStrategy getStrategy(DeliveryType type) {
-    return switch (type) {
-      case HTTP_HEADER -> new HeaderStrategy();
-      case HTTP_BODY -> new BodyStrategy();
-      case COOKIE -> new CookieStrategy();
-      case QUERY_PARAMETER -> new QueryParamStrategy();
-    };
-  }
+    public static DeliveryStrategy getStrategy(DeliveryType type) {
+        return switch (type) {
+            case HTTP_HEADER -> new HeaderStrategy();
+            case HTTP_BODY -> new BodyStrategy();
+            case COOKIE -> new CookieStrategy();
+            case QUERY_PARAMETER -> new QueryParamStrategy();
+        };
+    }
 }

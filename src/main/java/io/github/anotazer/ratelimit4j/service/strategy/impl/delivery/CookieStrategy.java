@@ -15,18 +15,18 @@ public class CookieStrategy implements DeliveryStrategy {
     public String getKey(HttpServletRequest request, RateLimit rateLimit) {
 
         String keyName = Optional.ofNullable(rateLimit.keyName())
-                .filter(key -> !key.isBlank())
-                .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.KEY_NAME_NOT_FOUND)
-                        .withPayload("Requested key name: " + rateLimit.keyName())
-                        .build());
+            .filter(key -> !key.isBlank())
+            .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.KEY_NAME_NOT_FOUND)
+                .withPayload("Requested key name: " + rateLimit.keyName())
+                .build());
 
         Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
-                .filter(cookie -> cookie.getName().equals(keyName))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.COOKIE_NOT_FOUND)
-                        .withPayload("Requested cookie: " + keyName)
-                        .build());
+            .filter(cookie -> cookie.getName().equals(keyName))
+            .map(Cookie::getValue)
+            .findFirst()
+            .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.COOKIE_NOT_FOUND)
+                .withPayload("Requested cookie: " + keyName)
+                .build());
 
         return keyName;
     }

@@ -11,16 +11,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public class HeaderStrategy implements DeliveryStrategy {
-  @Override
-  public String getKey(HttpServletRequest request, RateLimit rateLimit) {
-    if (KeyType.IP == rateLimit.keyType()) {
-      return IpUtil.getClientIp(request);
-    }
+    @Override
+    public String getKey(HttpServletRequest request, RateLimit rateLimit) {
+        if (KeyType.IP == rateLimit.keyType()) {
+            return IpUtil.getClientIp(request);
+        }
 
-    return Optional.ofNullable(request.getHeader(rateLimit.keyName()))
-        .filter(key -> !key.isBlank())
-        .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.KEY_NAME_NOT_FOUND)
-            .withPayload("Requested key name: " + rateLimit.keyName())
-            .build());
-  }
+        return Optional.ofNullable(request.getHeader(rateLimit.keyName()))
+            .filter(key -> !key.isBlank())
+            .orElseThrow(() -> new RateLimitException.Builder(ErrorCode.KEY_NAME_NOT_FOUND)
+                .withPayload("Requested key name: " + rateLimit.keyName())
+                .build());
+    }
 }
