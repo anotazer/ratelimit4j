@@ -15,8 +15,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RateLimitException.class)
     public ResponseEntity<ErrorResponse> handleRateLimitException(RateLimitException e) {
         ErrorResponse errorResponse = new ErrorResponse.Builder(e.getErrorCode())
-                .withPayload(e.getPayload())
-                .build();
+            .withPayload(e.getPayload())
+            .build();
 
         HttpStatus httpStatus = HttpStatus.TOO_MANY_REQUESTS;
         return ResponseEntity.status(httpStatus).body(errorResponse);
@@ -25,8 +25,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception e) {
         ErrorResponse errorResponse = new ErrorResponse.Builder(ErrorCode.INTERNAL_SERVER_ERROR)
-                .withPayload(e.getMessage())
-                .build();
+            .withPayload(e.getMessage())
+            .build();
 
         HttpStatusCode httpStatusCode = HttpStatus.INTERNAL_SERVER_ERROR;
         return ResponseEntity.status(httpStatusCode).body(errorResponse);

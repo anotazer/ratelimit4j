@@ -7,11 +7,11 @@ import io.github.anotazer.ratelimit4j.service.strategy.impl.body.FormStrategy;
 import io.github.anotazer.ratelimit4j.service.strategy.impl.body.JsonStrategy;
 
 public class BodyParseStrategyFactory {
-  public static BodyParseStrategy getStrategy(String contentType) {
-    return switch (contentType) {
-      case "application/json" -> new JsonStrategy();
-      case "application/x-www-form-urlencoded" -> new FormStrategy();
-      default -> throw new RateLimitException.Builder(ErrorCode.UNSUPPORTED).build();
-    };
-  }
+    public static BodyParseStrategy getStrategy(String contentType) {
+        return switch (contentType) {
+            case "application/json" -> new JsonStrategy();
+            case "application/x-www-form-urlencoded" -> new FormStrategy();
+            default -> throw new RateLimitException.Builder(ErrorCode.UNSUPPORTED).build();
+        };
+    }
 }
