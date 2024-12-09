@@ -48,9 +48,71 @@ keyType(키 타입): <default: GLOBAL>
 keyName(키 이름): <default: "">
 ```
 
+### 사용 예시
+1. SNS 메시지 처리율 제한. (IP와 HTTP_HEADER를 곁들인)
+```java
+@RestController
+@ReqeustMapping("/api/v1/chat")
+public class ChatController {
 
+    // IP별, 1초에 3번의 채팅만 허용
+    @PostMapping("/send")
+    @RateLimit(limit = 3,
+        duration = 1,
+        timeUnit = TimeUnit.SECOND,
+        deliveryType = DeliveryType.HTTP_HEADER,
+        keyType = KeyType.IP)
+    public String sendMessage(@ReuqestBody RequestDTO request) {
+        // 채팅 로직
+        return "전송완료";
+    }
+}
+```
 
+2. 무엇이든 대답해주는 생성형 AI 서비스. (API_KEY와 HTTP_HEADER를 곁들인)
+```java
+@RestController
+@ReqeustMapping("/api/v1/gpt")
+public class GptController {
 
+    // API_KEY별, 1분에 3번의 요청만 허용
+    @GetMapping
+    @RateLimit(limit = 3,
+        duration = 1,
+        timeUnit = TimeUnit.MINUTE,
+        deliveryType = DeliveryType.HTTP_HEADER,
+        keyType = KeyType.API_KEY,
+        keyName = gptKey)
+    public String makeResponse(@ReuqestBody RequestDTO request) {
+        // 대답 생성 로직
+        return "생성된 대답";
+    }
+}
+```
+3. 모든 요청을 공평하게 1초에 1번으로 제한 하겠어 ! (Health체크는 제외 하고)
+```java
+@RateLimit(duration = 1)
+@RestController
+@RequestMapping("/api/v1")
+public class AllLimitController {
+
+    @NoRateLimit
+    @GetMapping("/health")
+    public String health() {
+        return "ok";
+    }
+
+    @GetMapping("/doSomething1")
+    public String doSomething1() {
+        return "something1";
+    }
+
+    @GetMapping("/doSomething2")
+    public String doSomething2() {
+        return "something2";
+    }
+}
+```
 
 
 
