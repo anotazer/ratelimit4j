@@ -5,24 +5,31 @@
 
 ### 시작하기
 1. 의존성을 추가하세요.
-```xml
-<dependency>
-    <groupId>io.github.anotazer</groupId>
-    <artifactId>ratelimit4j</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
+   
+    Gradle
+    ```gradle
+    implementation 'io.github.anotazer:ratelimit4j:1.0.0'
+    ```
+
+    Maven
+    ```xml
+    <dependency>
+        <groupId>io.github.anotazer</groupId>
+        <artifactId>ratelimit4j</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    ```
 2. @RateLimit 어노테이션을 추가하세요.
-```java
-// 어노테이션에 파라미터를 설정해서 원하는 형태로 처리율 제한이 가능합니다.
-@RateLimit(
-  limit = 1,
-  duration = 1,
-  timeUnit = TimeUnit.MINUTE,
-  deliveryType = DeliveryType.HTTP_HEADER,
-  keyType = KeyType.IP
-) 
-```
+    ```java
+    // 어노테이션에 파라미터를 설정해서 원하는 형태로 처리율 제한이 가능합니다.
+    @RateLimit(
+      limit = 1,
+      duration = 1,
+      timeUnit = TimeUnit.MINUTE,
+      deliveryType = DeliveryType.HTTP_HEADER,
+      keyType = KeyType.IP
+    ) 
+    ```
 
 ### 파라미터  
 RateLimit에서 지원하는 파라미터는 아래와 같습니다.  
